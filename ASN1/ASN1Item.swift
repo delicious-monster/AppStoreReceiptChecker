@@ -23,8 +23,6 @@ extension ASN1Item { // MARK: static methods
         children?.dump(depth + 1)
     }
 }
-
-
 extension Sequence where Iterator.Element == ASN1Item {
     public func dump(_ depth: Int = 0) {
         forEach { $0.dump(depth) }

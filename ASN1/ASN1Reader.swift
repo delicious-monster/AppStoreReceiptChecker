@@ -18,15 +18,40 @@ public extension ASN1Reader { // MARK: public methods
         var items: [ASN1Item] = []
 
         var byteIndex = 0
+        func nextByte() throws -> UInt8 {
+            guard byteIndex < bytes.count else { throw Errors.prematureEndOfBytes }
+            defer { byteIndex += 1 }
+            return bytes[byteIndex]
+        }
+
         while byteIndex < bytes.count {
 
-            func nextByte() throws -> UInt8 {
-                guard byteIndex < bytes.count else { throw Errors.prematureEndOfBytes }
-                defer { byteIndex += 1 }
-                return bytes[byteIndex]
-            }
+            let identifier: ASN1Identifier = try {
+                let firstByte = try nextByte()
+                let firstByteTag = firstByte & ASN1Identifier.UniversalTag.highTagNumber.rawValue
 
-            let identifier = try ASN1Identifier({ try nextByte() })
+                let tagSevenBitArray:[UInt8] = try {
+                    if firstByteTag == ASN1Identifier.UniversalTag.mask { // 0bxxx1_1111 means tag is too long to be encoded in this byte
+                        var sevenBitArray: [UInt8] = []
+                        while true {
+                            let nextTagByte = try nextByte()
+                            let highBitMask: UInt8 = 0b1000_0000
+                            let nextSevenBits = nextTagByte & ~highBitMask
+                            sevenBitArray.append(nextSevenBits)
+                            if (nextTagByte & highBitMask) == 0 { break }
+                        }
+                        return sevenBitArray
+                    } else {
+                        return [firstByteTag]
+                    }
+                }()
+                let tagClass = ASN1Identifier.TagClass(rawValue: firstByte & ASN1Identifier.TagClass.mask)! // literally impossible for this ! to fail
+
+                return ASN1Identifier(universalTag: (tagClass == .universal) ? ASN1Identifier.UniversalTag(rawValue: firstByteTag) : nil,
+                                      tagSevenBitArray: tagSevenBitArray,
+                                      method: ASN1Identifier.Method(rawValue: firstByte & ASN1Identifier.Method.mask)!,
+                                      tagClass: tagClass)
+            }()
 
             let payloadLength: Int = try {
                 let firstLengthByte = try nextByte()
@@ -40,17 +65,18 @@ public extension ASN1Reader { // MARK: public methods
                     let lengthBytesArray: [UInt8] = try (1...lengthBytesCount).map { _ in try nextByte() }
                     return lengthBytesArray.reduce(0) { ($0 << 8) | Int($1) }
                 }
-                }()
-            let payloadBytes = Array(bytes[byteIndex..<(byteIndex+payloadLength)])
-
-            let item: ASN1Item
-            if identifier.method == .constructed {
-                item = ASN1Item(identifier: identifier, bytes: nil, children: try parse(payloadBytes))
-            } else {
-                item = ASN1Item(identifier: identifier, bytes: payloadBytes, children: nil)
-            }
-            items += [item]
+            }()
+            let payloadBytes = Array(bytes[byteIndex..<byteIndex+payloadLength])
             byteIndex += payloadLength
+
+            let item: ASN1Item = try {
+                if identifier.method == .constructed {
+                    return ASN1Item(identifier: identifier, bytes: nil, children: try parse(payloadBytes))
+                } else {
+                    return ASN1Item(identifier: identifier, bytes: payloadBytes, children: nil)
+                }
+            }()
+            items += [item]
         }
         return items
     }

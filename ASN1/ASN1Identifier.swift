@@ -18,39 +18,6 @@ public struct ASN1Identifier {
 }
 
 
-public extension ASN1Identifier { // MARK: methods
-
-    public init(_ fetchByte: (() throws -> UInt8)) throws {
-        let firstByte = try fetchByte()
-        let firstByteTag = firstByte & UniversalTag.highTagNumber.rawValue
-
-        let localTagClass = TagClass(rawValue: firstByte & TagClass.mask)! // literally impossible for this ! to fail
-        if localTagClass == .universal {
-            self.universalTag = UniversalTag(rawValue: firstByteTag)
-        } else {
-            self.universalTag = nil
-        }
-
-        if firstByteTag == UniversalTag.mask { // 0bxxx1_1111 means tag is too long to be encoded in this byte
-            var sevenBitArray: [UInt8] = []
-            while true {
-                let nextByte = try fetchByte()
-                let highBitMask: UInt8 = 0b1000_0000
-                let nextSevenBits = nextByte & ~highBitMask
-                sevenBitArray.append(nextSevenBits)
-                if (nextByte & highBitMask) == 0 { break }
-            }
-            self.tagSevenBitArray = sevenBitArray
-        } else {
-            self.tagSevenBitArray = [firstByteTag]
-        }
-
-        self.method = Method(rawValue: firstByte & Method.mask)!
-        self.tagClass = localTagClass
-    }
-}
-
-
 extension ASN1Identifier : CustomDebugStringConvertible {
     public var debugDescription: String {
         let details = "{\(method), \(tagClass)}"
