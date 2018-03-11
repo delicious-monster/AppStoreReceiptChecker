@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:ASN1Tool.xcodeproj">
+      location = "self:/Users/wjs/Desktop/ASN1Tool/ASN1.xcodeproj">
    </FileRef>
 </Workspace>
