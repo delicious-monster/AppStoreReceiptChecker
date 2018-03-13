@@ -18,18 +18,6 @@ public struct ASN1Identifier {
 }
 
 
-extension ASN1Identifier : CustomDebugStringConvertible {
-    public var debugDescription: String {
-        let details = "{\(method), \(tagClass)}"
-        if let tag = universalTag {
-            return "<\(tag)>" + " " + details
-        } else {
-            return "\(tagSevenBitArray)" + " " + details
-        }
-    }
-}
-
-
 public extension ASN1Identifier { // MARK: types
     public enum Method : UInt8 {
         case primitive = 0b0000_0000
@@ -82,6 +70,32 @@ public extension ASN1Identifier { // MARK: types
 
         case highTagNumber = 0x1f
 
-        static let mask: UInt8 = 0x1f
+        static let mask: UInt8 = 0b0001_1111
     }
 }
+
+
+extension ASN1Identifier : CustomDebugStringConvertible {
+    public var debugDescription: String {
+        let methodString = (method == .primitive) ? "" : "\(method)"
+        let tagString = (tagClass == .universal) ? "" : "\(tagClass)"
+        let details: String = {
+            if methodString.isEmpty && tagString.isEmpty {
+                return ""
+            } else if methodString.isEmpty {
+                return "{\(tagClass)}"
+            } else if tagString.isEmpty {
+                return "{\(method)}"
+            } else {
+                return "{\(method) \(tagClass)}"
+            }
+        }()
+
+        if let tag = universalTag {
+            return "<\(tag)>" + (details.isEmpty ? "" : " " + details)
+        } else {
+            return "<\(tagSevenBitArray)>" + (details.isEmpty ? "" : " " + details)
+        }
+    }
+}
+

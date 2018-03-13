@@ -49,7 +49,7 @@ public extension ASN1Reader { // MARK: public methods
 
                 return ASN1Identifier(universalTag: (tagClass == .universal) ? ASN1Identifier.UniversalTag(rawValue: firstByteTag) : nil,
                                       tagSevenBitArray: tagSevenBitArray,
-                                      method: ASN1Identifier.Method(rawValue: firstByte & ASN1Identifier.Method.mask)!,
+                                      method: ASN1Identifier.Method(rawValue: firstByte & ASN1Identifier.Method.mask)!, // ! also can't fail here
                                       tagClass: tagClass)
             }()
 
@@ -71,9 +71,9 @@ public extension ASN1Reader { // MARK: public methods
 
             let item: ASN1Item = try {
                 if identifier.method == .constructed {
-                    return ASN1Item(identifier: identifier, bytes: nil, children: try parse(payloadBytes))
+                    return ASN1Item(identifier: identifier, children: try parse(payloadBytes))
                 } else {
-                    return ASN1Item(identifier: identifier, bytes: payloadBytes, children: nil)
+                    return ASN1Item(identifier: identifier, bytes: payloadBytes)
                 }
             }()
             items += [item]
