@@ -40,9 +40,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         print("\(bytes)")
         print("total bytes: \(bytes.count)")
 
-//        let bytes: [UInt8] = decryptedData.withUnsafeBytes { Array(UnsafeBufferPointer(start: $0, count: decryptedData.count)) }
         let items = try! ASN1Reader.parse(bytes)
         items.dump()
+
+        print("") // newline
+        print("") // newline
+        print("Start of Receipt:") // newline
+        let receipt = try! Receipt(encodedBytes)
+        print("\(receipt)")
     }
 }
 

@@ -9,17 +9,42 @@
 import Foundation
 
 public struct ReceiptAttribute {
-    public let field: FieldTypes
-    public let version: UInt8
-    public let value: ASN1Item
+    public let fieldType: FieldType
+    public let version: Int
+    public let value: ASN1Value
 }
 
 
 extension ReceiptAttribute { // MARK: types
-    public enum FieldTypes {
-        case app(field: AppReceiptFields)
-        case inApp(field: InAppPurchaseReceiptFields)
-        case unkonwn(byte: UInt8)
+    public enum FieldType : Hashable {
+        case app(_: AppReceiptFields)
+        case inApp(_: InAppPurchaseReceiptFields)
+        case unknown(_: Int)
+
+        // MARK: <Equatable>
+        public static func == (lhs: FieldType, rhs: FieldType) -> Bool {
+            switch (lhs, rhs) {
+            case (.app(let leftField), .app(let rightField)):
+                return leftField == rightField
+            case (.inApp(let leftField), .inApp(let rightField)):
+                return leftField == rightField
+            case (.unknown(let leftField), .unknown(let rightField)):
+                return leftField == rightField
+            default:
+                return false
+            }
+        }
+        // MARK: <Hashable>
+        public var hashValue: Int { // perfect hashing function assuming Apple doesn't add any tags over 0xffff
+            switch self {
+            case .app(let field):
+                return field.rawValue
+            case .inApp(let field):
+                return 0x10000 + field.rawValue
+            case .unknown(let field):
+                return 0x20000 + field
+            }
+        }
     }
 
     public enum AppReceiptFields : Int {
