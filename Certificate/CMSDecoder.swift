@@ -43,12 +43,6 @@ public extension CMSDecoder { // MARK: functions
     }
 }
 
-extension OSStatus { // MARK: operators
-    internal static func | (status: OSStatus, throwingBlock: (OSStatus) throws -> Void) throws {
-        if status != 0 { try throwingBlock(status) }
-    }
-}
-
 public extension CMSDecoder { // MARK: errors
     public enum Errors : Error {
         case cannotCreateDecoder(status: OSStatus)

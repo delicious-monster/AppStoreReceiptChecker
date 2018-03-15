@@ -20,6 +20,8 @@
 		7F1810A3205617AF00950910 /* ReceiptAttribute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F1810A2205617AF00950910 /* ReceiptAttribute.swift */; };
 		7F1810A52056182100950910 /* Receipt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F1810A42056182100950910 /* Receipt.swift */; };
 		7F7DBDC7205762A7005B4990 /* ASN1Value.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F7DBDC6205762A7005B4990 /* ASN1Value.swift */; };
+		7FE25857205A651100F70F50 /* OSStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE25856205A651100F70F50 /* OSStatus.swift */; };
+		7FE25859205A83A000F70F50 /* Certificate-Bridging-Header.h in Headers */ = {isa = PBXBuildFile; fileRef = 7FE25858205A83A000F70F50 /* Certificate-Bridging-Header.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,11 +60,13 @@
 		7F13C05C205361A200D1FB8A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7F13C05F205361A200D1FB8A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		7F13C061205361A200D1FB8A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		7F13C062205361A200D1FB8A /* ASN1Harness.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ASN1Harness.entitlements; sourceTree = "<group>"; };
 		7F18109F20560AD200950910 /* CMSDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CMSDecoder.swift; sourceTree = "<group>"; };
 		7F1810A2205617AF00950910 /* ReceiptAttribute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptAttribute.swift; sourceTree = "<group>"; };
 		7F1810A42056182100950910 /* Receipt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Receipt.swift; sourceTree = "<group>"; };
 		7F7DBDC6205762A7005B4990 /* ASN1Value.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ASN1Value.swift; sourceTree = "<group>"; };
+		7FE25856205A651100F70F50 /* OSStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSStatus.swift; sourceTree = "<group>"; };
+		7FE25858205A83A000F70F50 /* Certificate-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Certificate-Bridging-Header.h"; sourceTree = "<group>"; };
+		7FE2585A205A866500F70F50 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +91,7 @@
 		7F13C02D20535ACB00D1FB8A = {
 			isa = PBXGroup;
 			children = (
+				7FE2585A205A866500F70F50 /* README.md */,
 				7F13C04020535ADC00D1FB8A /* samplereceipt.cer */,
 				7F13C059205361A200D1FB8A /* ASN1Harness */,
 				7F13C04720535C0E00D1FB8A /* Certificate */,
@@ -107,7 +112,9 @@
 			isa = PBXGroup;
 			children = (
 				7F13C04920535C0E00D1FB8A /* Info.plist */,
+				7FE25858205A83A000F70F50 /* Certificate-Bridging-Header.h */,
 				7F18109F20560AD200950910 /* CMSDecoder.swift */,
+				7FE25856205A651100F70F50 /* OSStatus.swift */,
 				7F1810A12056179500950910 /* Store Receipts */,
 				7F18109E20560A6500950910 /* ASN.1 */,
 			);
@@ -117,10 +124,9 @@
 		7F13C059205361A200D1FB8A /* ASN1Harness */ = {
 			isa = PBXGroup;
 			children = (
+				7F13C061205361A200D1FB8A /* Info.plist */,
 				7F13C05C205361A200D1FB8A /* Assets.xcassets */,
 				7F13C05E205361A200D1FB8A /* MainMenu.xib */,
-				7F13C061205361A200D1FB8A /* Info.plist */,
-				7F13C062205361A200D1FB8A /* ASN1Harness.entitlements */,
 				7F13C05A205361A200D1FB8A /* AppDelegate.swift */,
 			);
 			path = ASN1Harness;
@@ -153,6 +159,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7FE25859205A83A000F70F50 /* Certificate-Bridging-Header.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -213,7 +220,6 @@
 					};
 					7F13C057205361A200D1FB8A = {
 						CreatedOnToolsVersion = 9.2;
-						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -268,6 +274,7 @@
 				7F13C05320535E8E00D1FB8A /* ASN1Reader.swift in Sources */,
 				7F09372F20555FDF00EEBF1E /* ASN1Identifier.swift in Sources */,
 				7F7DBDC7205762A7005B4990 /* ASN1Value.swift in Sources */,
+				7FE25857205A651100F70F50 /* OSStatus.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -431,6 +438,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.delicious-monster.Certificate";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Certificate/Certificate-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -458,6 +466,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.delicious-monster.Certificate";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Certificate/Certificate-Bridging-Header.h";
 				SWIFT_VERSION = 4.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -469,14 +478,14 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = ASN1Harness/ASN1Harness.entitlements;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = RM6A3972U7;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = ASN1Harness/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.delicious-monster.ASN1Harness";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
@@ -486,14 +495,14 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = ASN1Harness/ASN1Harness.entitlements;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = RM6A3972U7;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = ASN1Harness/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.delicious-monster.ASN1Harness";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.0;
 			};
 			name = Release;

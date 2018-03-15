@@ -45,9 +45,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         print("") // newline
         print("") // newline
-        print("Start of Receipt:") // newline
         let receipt = try! Receipt(encodedBytes)
         print("\(receipt)")
+        do {
+            try receipt.validateReceipt()
+        } catch {
+            print("validation failed \(error)")
+        }
+//        dump(receipt)
     }
 }
 
