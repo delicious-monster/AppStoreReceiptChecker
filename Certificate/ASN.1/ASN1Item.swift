@@ -13,6 +13,7 @@ public struct ASN1Item {
     public let payload: ASN1Item.PayloadType
 }
 
+
 extension ASN1Item { // MARK: init
     public init(identifier: ASN1Identifier, bytes: [UInt8]) {
         self.identifier = identifier
@@ -42,14 +43,24 @@ extension Sequence where Iterator.Element == ASN1Item {
     }
 }
 
-extension ASN1Item { // MARK: static methods
+
+extension ASN1Item : CustomDebugStringConvertible { // MARK: <CustomDebugStringConvertible>
+    public var debugDescription: String {
+        let identifierString = identifier.debugDescription
+        let payloadString = payload.debugDescription
+        return identifierString + " " + payloadString
+    }
+}
+
+
+extension ASN1Item { // MARK: types
     public enum PayloadType {
         case primitive(_: ASN1Value)
         case constructed(_: [ASN1Item])
     }
 }
 
-extension ASN1Item.PayloadType : CustomDebugStringConvertible {
+extension ASN1Item.PayloadType : CustomDebugStringConvertible { // MARK: <CustomDebugStringConvertible>
     public var debugDescription: String {
         switch self {
         case .primitive(let value):
@@ -57,14 +68,6 @@ extension ASN1Item.PayloadType : CustomDebugStringConvertible {
         case .constructed(let children):
             return "\(children.count) children"
         }
-    }
-}
-
-extension ASN1Item : CustomDebugStringConvertible {
-    public var debugDescription: String {
-        let identifierString = identifier.debugDescription
-        let payloadString = payload.debugDescription
-        return identifierString + " " + payloadString
     }
 }
 

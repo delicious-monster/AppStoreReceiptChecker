@@ -15,7 +15,7 @@ public struct ASN1Value {
 
 
 
-extension ASN1Value {
+extension ASN1Value { // MARK: calculated values
     public var typedValue: TypedValue {
         guard let universalTag = universalTag else { return .bytes(bytes) }
 
@@ -129,7 +129,7 @@ extension ASN1Value { // MARK: types
 }
 
 
-extension ASN1Value : CustomDebugStringConvertible {
+extension ASN1Value : CustomDebugStringConvertible { // MARK: <CustomDebugStringConvertible>
     public var debugDescription: String {
         switch typedValue {
         case .boolean(let boolean):

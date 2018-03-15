@@ -80,7 +80,10 @@ public extension ASN1Reader { // MARK: public methods
                                 let lengthBytesCount = firstBytePayload
                                 guard lengthBytesCount > 0 else { return 0 }
                                 let lengthBytesArray: [UInt8] = try (1...lengthBytesCount).map { _ in try nextByte() }
-                                return lengthBytesArray.reduce(0) { ($0 << 8) | Int($1) }
+                                return lengthBytesArray.reduce(0) {
+                                    // FIXME: make sure $0 won't overflow when shifted left, if so throw an exception
+                                    ($0 << 8) | Int($1)
+                                }
                             }
                         }()
 

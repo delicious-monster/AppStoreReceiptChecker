@@ -11,9 +11,36 @@ import Foundation
 public struct ReceiptAttribute {
     public let fieldType: FieldType
     public let version: Int
-    public let value: ASN1Value
+    public let rawValue: ASN1Value
 }
 
+
+extension ReceiptAttribute { // MARK: calculated values
+    public var decodedTypedValue: ASN1Value.TypedValue? {
+        let cannotDecodeTypes: Set<FieldType> = [.app(.opaqueValue), .app(.sha1Hash)]
+        if case .unknown(_) = fieldType { return nil }
+        guard !cannotDecodeTypes.contains(fieldType) else { return .bytes(rawValue.bytes) } // NOTE: as of version 2 of the "opaqueValue" field it is NOT valid ASN.1, so we just return the raw bytes here!!!
+        guard let decodedItem = (try? ASN1Reader.parse(rawValue.bytes))?.first else { return nil }
+        guard case let .primitive(decodedValue) = decodedItem.payload else { return nil }
+        return decodedValue.typedValue
+    }
+}
+
+extension ReceiptAttribute : CustomDebugStringConvertible { // MARK: <CustomDebugStringConvertible>
+    public var debugDescription: String {
+        let fieldTypeString: String = {
+            switch fieldType {
+            case .app(let field):
+                return ".app.\(field)"
+            case .inApp(let field):
+                return ".inApp.\(field)"
+            case .unknown(let raw):
+                return ".unknown.\(raw)"
+            }
+        }()
+        return fieldTypeString + ((version != 1) ? " v\(version)" : "") + ": " + ((decodedTypedValue != nil) ? "\(decodedTypedValue!)" : "\(rawValue)")
+    }
+}
 
 extension ReceiptAttribute { // MARK: types
     public enum FieldType : Hashable {

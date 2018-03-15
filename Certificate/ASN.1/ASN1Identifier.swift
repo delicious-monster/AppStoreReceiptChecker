@@ -75,7 +75,7 @@ public extension ASN1Identifier { // MARK: types
 }
 
 
-extension ASN1Identifier : CustomDebugStringConvertible {
+extension ASN1Identifier : CustomDebugStringConvertible { // MARK: <CustomDebugStringConvertible>
     public var debugDescription: String {
         let methodString = (method == .primitive) ? "" : "\(method)"
         let tagString = (tagClass == .universal) ? "" : "\(tagClass)"

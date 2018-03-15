@@ -14,8 +14,9 @@ public struct Receipt {
     let bytes: [UInt8]
 
     let appReceiptEntries: [ReceiptAttribute.AppReceiptFields : ReceiptAttribute]
+    let unknownAppReceiptEntries: [Int : ReceiptAttribute]
     let inAppPurchaseReceiptEntries: [ReceiptAttribute.InAppPurchaseReceiptFields : ReceiptAttribute]
-    let unknownReceiptEntries: [Int : ReceiptAttribute]
+    let unknownInAppPurchaseReceiptEntries: [Int : ReceiptAttribute]
 }
 
 
@@ -48,57 +49,64 @@ extension Receipt { // MARK: errors
 private extension Receipt { // MARK: private init
     private init(decoder: CMSDecoder) throws {
 
-        let bytes =  try decoder.decryptedContent()
-        let items = try ASN1Reader.parse(bytes)
-
-        guard let outermostSet = items.first,
-            outermostSet.identifier.universalTag == .set,
-            case let .constructed(sequences) = outermostSet.payload
-            else { throw Errors.storeReceiptMalformedMissingEnclosingSet }
+        let decryptedBytes = try decoder.decryptedContent()
 
         var appReceiptEntries: [ReceiptAttribute.AppReceiptFields : ReceiptAttribute] = [ : ]
+        var unknownAppReceiptEntries: [Int : ReceiptAttribute] = [ : ]
         var inAppPurchaseReceiptEntries: [ReceiptAttribute.InAppPurchaseReceiptFields : ReceiptAttribute] = [ : ]
-        var unknownReceiptEntries: [Int : ReceiptAttribute] = [ : ]
+        var unknownInAppPurchaseReceiptEntries: [Int : ReceiptAttribute] = [ : ]
 
-        sequences.forEach { sequence in
-            guard sequence.identifier.universalTag == .sequence,
-                case let .constructed(rows) = sequence.payload,
-                rows.count == 3 else { return } // malformed contents
+        func parseBytes(_ bytes: [UInt8], intoInAppPurchaseReceipt: Bool = false) throws {
+            let items = try ASN1Reader.parse(bytes)
 
-            // first row in sequence: field type
-            guard rows[0].identifier.universalTag == .integer,
-                case let .primitive(fieldTypeValue) = rows[0].payload,
-                case let .integer(rawFieldType) = fieldTypeValue.typedValue else { return }
-            let fieldType: ReceiptAttribute.FieldType = {
-                if let appReceiptField = ReceiptAttribute.AppReceiptFields(rawValue: Int(rawFieldType)) {
-                    return ReceiptAttribute.FieldType.app(appReceiptField)
+            guard let outermostSet = items.first,
+                outermostSet.identifier.universalTag == .set,
+                case let .constructed(receiptSequences) = outermostSet.payload
+                else { throw Errors.storeReceiptMalformedMissingEnclosingSet }
+
+            try receiptSequences.forEach { sequence in
+                guard sequence.identifier.universalTag == .sequence,
+                    case let .constructed(rows) = sequence.payload,
+                    rows.count == 3 else { return } // malformed contents
+
+                // first row in sequence: field type
+                guard rows[0].identifier.universalTag == .integer,
+                    case let .primitive(fieldTypeValue) = rows[0].payload,
+                    case let .integer(rawFieldType) = fieldTypeValue.typedValue else { return }
+                // second row in sequence: version #
+                guard rows[1].identifier.universalTag == .integer,
+                    case let .primitive(versionValue) = rows[1].payload,
+                    case let .integer(version) = versionValue.typedValue else { return }
+                // third row in sequence: ASN.1 contents
+                guard rows[2].identifier.universalTag == .octetString,
+                    case let .primitive(contentsValue) = rows[2].payload else { return }
+
+                if !intoInAppPurchaseReceipt {
+                    if rawFieldType == ReceiptAttribute.AppReceiptFields.inAppPurchaseReceipt.rawValue { // sub-dictionary for in-app purchase, we store this in a separate var
+                        try parseBytes(contentsValue.bytes, intoInAppPurchaseReceipt: true)
+
+                    } else if let appReceiptField = ReceiptAttribute.AppReceiptFields(rawValue: Int(rawFieldType)) {
+                        appReceiptEntries[appReceiptField] = ReceiptAttribute(fieldType: .app(appReceiptField), version: Int(version), rawValue: contentsValue)
+                    } else {
+                        unknownAppReceiptEntries[Int(rawFieldType)] = ReceiptAttribute(fieldType: .unknown(Int(rawFieldType)), version: Int(version), rawValue: contentsValue)
+                    }
                 } else {
-                    return ReceiptAttribute.FieldType.unknown(Int(rawFieldType))
+                    if let inAppPurchaseReceiptField = ReceiptAttribute.InAppPurchaseReceiptFields(rawValue: Int(rawFieldType)) {
+                        inAppPurchaseReceiptEntries[inAppPurchaseReceiptField] = ReceiptAttribute(fieldType: .inApp(inAppPurchaseReceiptField), version: Int(version), rawValue: contentsValue)
+                    } else {
+                        unknownInAppPurchaseReceiptEntries[Int(rawFieldType)] = ReceiptAttribute(fieldType: .unknown(Int(rawFieldType)), version: Int(version), rawValue: contentsValue)
+                    }
                 }
-            }()
-
-            // second row in sequence: version #
-            guard rows[1].identifier.universalTag == .integer,
-                case let .primitive(versionValue) = rows[1].payload,
-                case let .integer(version) = versionValue.typedValue else { return }
-
-            // second row in sequence: ASN.1 contents
-            guard rows[2].identifier.universalTag == .octetString,
-                case let .primitive(contentsValue) = rows[2].payload else { return }
-
-            let receiptAttribute = ReceiptAttribute(fieldType: fieldType, version: Int(version), value: contentsValue)
-            print("attribute: {\(fieldType), \(version), \(contentsValue)}")
-            if case let .app(field) = fieldType {
-                appReceiptEntries[field] = receiptAttribute
-            } else {
-                unknownReceiptEntries[Int(rawFieldType)] = receiptAttribute
             }
         }
 
+        try parseBytes(decryptedBytes)
+
         self.decoder = decoder
-        self.bytes = bytes
+        self.bytes = decryptedBytes
         self.appReceiptEntries = appReceiptEntries
+        self.unknownAppReceiptEntries = unknownAppReceiptEntries
         self.inAppPurchaseReceiptEntries = inAppPurchaseReceiptEntries
-        self.unknownReceiptEntries = unknownReceiptEntries
+        self.unknownInAppPurchaseReceiptEntries = unknownInAppPurchaseReceiptEntries
     }
 }
