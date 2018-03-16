@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "7F13C04520535C0E00D1FB8A"
-               BuildableName = "Certificate.framework"
-               BlueprintName = "Certificate"
+               BuildableName = "App_Store_Certificate_Checker.framework"
+               BlueprintName = "App Store Certificate Checker"
                ReferencedContainer = "container:ASN1.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -48,8 +48,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7F13C04520535C0E00D1FB8A"
-            BuildableName = "Certificate.framework"
-            BlueprintName = "Certificate"
+            BuildableName = "App_Store_Certificate_Checker.framework"
+            BlueprintName = "App Store Certificate Checker"
             ReferencedContainer = "container:ASN1.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -66,8 +66,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7F13C04520535C0E00D1FB8A"
-            BuildableName = "Certificate.framework"
-            BlueprintName = "Certificate"
+            BuildableName = "App_Store_Certificate_Checker.framework"
+            BlueprintName = "App Store Certificate Checker"
             ReferencedContainer = "container:ASN1.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

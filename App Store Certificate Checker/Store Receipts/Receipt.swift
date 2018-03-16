@@ -90,16 +90,16 @@ extension Receipt : CustomDebugStringConvertible { // MARK: <CustomDebugStringCo
     public var debugDescription: String {
         return """
         appReceiptEntries:
-        \t\(appReceiptEntries.values.map { $0.debugDescription }.joined(separator: "\n\t"))
+        \t\(appReceiptEntries.values.sorted { $0.fieldType.hashValue < $1.fieldType.hashValue }.map { $0.debugDescription }.joined(separator: "\n\t"))
 
         unknownAppReceiptEntries:
-        \t\(unknownAppReceiptEntries.values.map { $0.debugDescription }.joined(separator: "\n\t"))
+        \t\(unknownAppReceiptEntries.values.sorted { $0.fieldType.hashValue < $1.fieldType.hashValue }.map { $0.debugDescription }.joined(separator: "\n\t"))
 
         inAppPurchaseReceiptEntries:
-        \t\(inAppPurchaseReceiptEntries.values.map { $0.debugDescription }.joined(separator: "\n\t"))
+        \t\(inAppPurchaseReceiptEntries.values.sorted { $0.fieldType.hashValue < $1.fieldType.hashValue }.map { $0.debugDescription }.joined(separator: "\n\t"))
 
         unknownInAppPurchaseReceiptEntries:
-        \t\(unknownInAppPurchaseReceiptEntries.values.map { $0.debugDescription }.joined(separator: "\n\t"))
+        \t\(unknownInAppPurchaseReceiptEntries.values.sorted { $0.fieldType.hashValue < $1.fieldType.hashValue }.map { $0.debugDescription }.joined(separator: "\n\t"))
         """
     }
 }
@@ -169,6 +169,7 @@ private extension Receipt { // MARK: private init
         self.unknownInAppPurchaseReceiptEntries = unknownInAppPurchaseReceiptEntries
     }
 }
+
 
 private extension Receipt { // MARK: private methods
     private func checkBundleIdentifier(_ expectedBundleIdentifier: String? = nil) throws {
@@ -275,5 +276,4 @@ private extension Receipt { // MARK: private methods
         let data = (macAddressCFData! as Data)
         return data.withUnsafeBytes { Array(UnsafeBufferPointer(start: $0, count: data.count)) }
     }
-
 }

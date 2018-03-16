@@ -18,41 +18,24 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        guard let receiptURL = Bundle.main.url(forResource: "samplereceipt", withExtension: "cer") else { exit(-1) }
-        let data = try! Data(contentsOf: receiptURL)
-        let encodedBytes: [UInt8] = data.withUnsafeBytes { Array(UnsafeBufferPointer(start: $0, count: data.count)) }
+        // guard let receiptURL = Bundle.main.url(forResource: "AcornReceipts/Acorn Volume Purchase Receipt", withExtension: "cer") else { exit(-1) }
+        // guard let receiptURL = Bundle.main.url(forResource: "AcornReceipts/Standard Acorn 6 receipt", withExtension: "cer") else { exit(-1) }
 
-        print("Start of encoded data dump:") // newline
-        print("\(data as NSData)")
-        print("total bytes: \(data.count)")
+        guard let samplesFolderURL = Bundle.main.url(forResource: "MASReceipts", withExtension:"") else { exit(-1) }
+        try! FileManager.default.contentsOfDirectory(at: samplesFolderURL, includingPropertiesForKeys: nil).forEach { subfolderURL in
+            let receiptURL = subfolderURL.appendingPathComponent("receipt")
 
-        let encodedItems = try! ASN1Reader.parse(encodedBytes)
-        encodedItems.dump()
+            print("")
+            print(receiptURL)
 
-
-
-        let decoder = try! CMSDecoder.decoder(receiptURL)
-        let bytes = try! decoder.decryptedContent()
-
-        print("") // newline
-        print("") // newline
-        print("Start of decoded data dump:") // newline
-        print("\(bytes)")
-        print("total bytes: \(bytes.count)")
-
-        let items = try! ASN1Reader.parse(bytes)
-        items.dump()
-
-        print("") // newline
-        print("") // newline
-        let receipt = try! Receipt(encodedBytes)
-        print("\(receipt)")
-        do {
-            try receipt.validateReceipt()
-        } catch {
-            print("validation failed \(error)")
+            let receipt = try! Receipt(receiptURL)
+            debugPrint(receipt)
+            do {
+                try receipt.validateReceipt()
+            } catch {
+                print("validation failed \(error)")
+            }
         }
-//        dump(receipt)
     }
 }
 
