@@ -6,7 +6,7 @@
 //  Copyright © 2018 Delicious Monster Software, LLC. All rights reserved.
 //
 
-import Certificate
+import AppStoreCertificateChecker
 import Cocoa
 import Security
 

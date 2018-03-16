@@ -63,6 +63,7 @@
 		7F18109F20560AD200950910 /* CMSDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CMSDecoder.swift; sourceTree = "<group>"; };
 		7F1810A2205617AF00950910 /* ReceiptAttribute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptAttribute.swift; sourceTree = "<group>"; };
 		7F1810A42056182100950910 /* Receipt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Receipt.swift; sourceTree = "<group>"; };
+		7F4C4FF8205BBC7100D9E42E /* BadIcon.acorn */ = {isa = PBXFileReference; lastKnownFileType = file; path = BadIcon.acorn; sourceTree = "<group>"; };
 		7F7DBDC6205762A7005B4990 /* ASN1Value.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ASN1Value.swift; sourceTree = "<group>"; };
 		7FE25856205A651100F70F50 /* OSStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSStatus.swift; sourceTree = "<group>"; };
 		7FE25858205A83A000F70F50 /* App-Store-Receipt-Checker-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "App-Store-Receipt-Checker-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -94,6 +95,7 @@
 				7FE2585A205A866500F70F50 /* README.md */,
 				7F13C059205361A200D1FB8A /* Receipt Checker Test Harness */,
 				7F13C04720535C0E00D1FB8A /* App Store Receipt Checker */,
+				7F4C4FF8205BBC7100D9E42E /* BadIcon.acorn */,
 				7F13C03720535ACB00D1FB8A /* Products */,
 			);
 			sourceTree = "<group>";
