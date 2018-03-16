@@ -1,6 +1,6 @@
 //
-//  App-Store-Certificate-Checker-Bridging-Header.h
-//  App Store Certificate
+//  App-Store-Receipt-Checker-Bridging-Header.h
+//  App Store Receipt Checker
 //
 //  Created by William Shipley on 3/15/18.
 //  Copyright © 2018 Delicious Monster Software, LLC. All rights reserved.
