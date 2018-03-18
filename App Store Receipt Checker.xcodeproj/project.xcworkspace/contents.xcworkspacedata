@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:/Users/wjs/Desktop/ASN1Tool/ASN1.xcodeproj">
+      location = "self:/Users/wjs/Source/AppStoreReceiptChecker/App Store Receipt Checker.xcodeproj">
    </FileRef>
 </Workspace>

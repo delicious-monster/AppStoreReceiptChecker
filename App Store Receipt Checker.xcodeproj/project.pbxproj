@@ -225,7 +225,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 7F13C03120535ACB00D1FB8A /* Build configuration list for PBXProject "ASN1" */;
+			buildConfigurationList = 7F13C03120535ACB00D1FB8A /* Build configuration list for PBXProject "App Store Receipt Checker" */;
 			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -512,7 +512,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		7F13C03120535ACB00D1FB8A /* Build configuration list for PBXProject "ASN1" */ = {
+		7F13C03120535ACB00D1FB8A /* Build configuration list for PBXProject "App Store Receipt Checker" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7F13C03B20535ACB00D1FB8A /* Debug */,
