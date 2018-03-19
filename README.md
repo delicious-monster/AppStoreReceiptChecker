@@ -29,7 +29,7 @@ If all you want to do is check to make sure your app is licensed from the App St
 }
 ```
 
-You can also use the ASN.1 parser to take about receipts and certificates and poke around in them. Note that often ASN.1 is used as a wrapper for values that are more ASN.1 — App Store receipts at least three levels of wrapping this way, four if they have in-app purchases.
+You can also use the ASN.1 parser to take apart receipts and certificates and poke around in them. Note that often ASN.1 is used as a wrapper for values that are more ASN.1 — App Store receipts at least three levels of wrapping this way, four if they have in-app purchases.
 
 ***
 
