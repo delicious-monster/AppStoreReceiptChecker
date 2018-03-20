@@ -23,7 +23,11 @@ public struct Receipt {
 
 public extension Receipt { // MARK: init
     public init() throws {
-        guard let receiptURL = Bundle.main.appStoreReceiptURL else { throw Errors.missingStoreReceipt }
+        try self.init(Bundle.main)
+    }
+
+    public init(_ bundle: Bundle) throws {
+        guard let receiptURL = bundle.appStoreReceiptURL else { throw Errors.missingStoreReceipt }
         try self.init(receiptURL)
     }
 
