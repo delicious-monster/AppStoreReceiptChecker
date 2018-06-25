@@ -14,23 +14,25 @@ public struct Receipt {
     let decoder: CMSDecoder
     let bytes: [UInt8]
 
-    let appReceiptEntries: [ReceiptAttribute.AppReceiptFields : ReceiptAttribute]
-    let unknownAppReceiptEntries: [Int : ReceiptAttribute]
-    let inAppPurchaseReceiptEntries: [ReceiptAttribute.InAppPurchaseReceiptFields : ReceiptAttribute]
-    let unknownInAppPurchaseReceiptEntries: [Int : ReceiptAttribute]
+    public let appReceiptEntries: [ReceiptAttribute.AppReceiptFields : ReceiptAttribute]
+    public let unknownAppReceiptEntries: [Int : ReceiptAttribute]
+    public let inAppPurchaseReceipts: [InAppPurchaseReceipt]
+
 }
 
+public struct InAppPurchaseReceipt {
+    public let inAppPurchaseReceiptEntries: [ReceiptAttribute.InAppPurchaseReceiptFields : ReceiptAttribute]
+    public let unknownInAppPurchaseReceiptEntries: [Int : ReceiptAttribute]
+}
 
 public extension Receipt { // MARK: init
     public init() throws {
         try self.init(Bundle.main)
     }
-
     public init(_ bundle: Bundle) throws {
         guard let receiptURL = bundle.appStoreReceiptURL else { throw Errors.missingStoreReceipt }
         try self.init(receiptURL)
     }
-
     public init(_ url: URL) throws {
         try self.init(decoder: try CMSDecoder.decoder(url))
     }
@@ -53,12 +55,12 @@ extension Receipt { // MARK: public methods
     }
 }
 
-
 extension Receipt { // MARK: errors
     public enum Errors : Error {
         // receipt reading
         case missingStoreReceipt
         case receiptMalformedMissingEnclosingSet
+        case receiptInvalidEnclosingSetSequence
         // info.plist
         case bundleInfoDictionaryMissing
         // bundleIdentifier check
@@ -95,16 +97,44 @@ extension Receipt : CustomDebugStringConvertible { // MARK: <CustomDebugStringCo
         return """
         appReceiptEntries:
         \t\(appReceiptEntries.values.sorted { $0.fieldType.hashValue < $1.fieldType.hashValue }.map { $0.debugDescription }.joined(separator: "\n\t"))
-
         unknownAppReceiptEntries:
         \t\(unknownAppReceiptEntries.values.sorted { $0.fieldType.hashValue < $1.fieldType.hashValue }.map { $0.debugDescription }.joined(separator: "\n\t"))
-
-        inAppPurchaseReceiptEntries:
-        \t\(inAppPurchaseReceiptEntries.values.sorted { $0.fieldType.hashValue < $1.fieldType.hashValue }.map { $0.debugDescription }.joined(separator: "\n\t"))
-
-        unknownInAppPurchaseReceiptEntries:
-        \t\(unknownInAppPurchaseReceiptEntries.values.sorted { $0.fieldType.hashValue < $1.fieldType.hashValue }.map { $0.debugDescription }.joined(separator: "\n\t"))
+        inAppPurchaseReceipts:
+        \t\(inAppPurchaseReceipts.map { $0.debugDescription }.joined(separator: "\n\t"))
         """
+    }
+}
+
+extension InAppPurchaseReceipt : CustomDebugStringConvertible { // MARK: <CustomDebugStringConvertible>
+    public var debugDescription: String {
+        return """
+        \tinAppPurchaseReceiptEntries:
+        \t\t\(inAppPurchaseReceiptEntries.values.sorted { $0.fieldType.hashValue < $1.fieldType.hashValue }.map { $0.debugDescription }.joined(separator: "\n\t\t"))
+        unknownInAppPurchaseReceiptEntries:
+        \t\t\(unknownInAppPurchaseReceiptEntries.values.sorted { $0.fieldType.hashValue < $1.fieldType.hashValue }.map { $0.debugDescription }.joined(separator: "\n\t\t"))
+        """
+    }
+}
+
+extension ASN1Item {
+    /// Extracts the fieldType, contents, and version value from a 3-valued ASN1Item sequence
+    func extractProperty() throws -> (fieldType: UInt64, contents: ASN1Value, version: UInt64) {
+        guard self.identifier.universalTag == .sequence,
+            case let .constructed(rows) = self.payload,
+            rows.count == 3 else { throw Receipt.Errors.receiptInvalidEnclosingSetSequence } // malformed contents
+        // first row in sequence: field type
+        guard rows[0].identifier.universalTag == .integer,
+            case let .primitive(fieldTypeValue) = rows[0].payload,
+            case let .integer(rawFieldType) = fieldTypeValue.typedValue else { throw Receipt.Errors.receiptInvalidEnclosingSetSequence }
+        // second row in sequence: version #
+        guard rows[1].identifier.universalTag == .integer,
+            case let .primitive(versionValue) = rows[1].payload,
+            case let .integer(version) = versionValue.typedValue else { throw Receipt.Errors.receiptInvalidEnclosingSetSequence }
+        // third row in sequence: ASN.1 contents
+        guard rows[2].identifier.universalTag == .octetString,
+            case let .primitive(contentsValue) = rows[2].payload else { throw Receipt.Errors.receiptInvalidEnclosingSetSequence }
+
+        return (rawFieldType, contentsValue, version)
     }
 }
 
@@ -116,59 +146,58 @@ private extension Receipt { // MARK: private init
 
         var appReceiptEntries: [ReceiptAttribute.AppReceiptFields : ReceiptAttribute] = [ : ]
         var unknownAppReceiptEntries: [Int : ReceiptAttribute] = [ : ]
-        var inAppPurchaseReceiptEntries: [ReceiptAttribute.InAppPurchaseReceiptFields : ReceiptAttribute] = [ : ]
-        var unknownInAppPurchaseReceiptEntries: [Int : ReceiptAttribute] = [ : ]
+        var inAppPurchaseReceipts: [InAppPurchaseReceipt] = []
 
-        func parseBytes(_ bytes: [UInt8], intoInAppPurchaseReceipt: Bool = false) throws {
-            let items = try ASN1Reader.parse(bytes)
+        let items = try ASN1Reader.parse(decryptedBytes)
 
-            guard let outermostSet = items.first,
-                outermostSet.identifier.universalTag == .set,
-                case let .constructed(receiptSequences) = outermostSet.payload
-                else { throw Errors.receiptMalformedMissingEnclosingSet }
+        guard let outermostSet = items.first,
+            outermostSet.identifier.universalTag == .set,
+            case let .constructed(receiptSequences) = outermostSet.payload
+            else { throw Errors.receiptMalformedMissingEnclosingSet }
 
-            try receiptSequences.forEach { sequence in
-                guard sequence.identifier.universalTag == .sequence,
-                    case let .constructed(rows) = sequence.payload,
-                    rows.count == 3 else { return } // malformed contents
+        try receiptSequences.forEach { sequence in
+            let (rawFieldType, contentsValue, version) = try sequence.extractProperty()
 
-                // first row in sequence: field type
-                guard rows[0].identifier.universalTag == .integer,
-                    case let .primitive(fieldTypeValue) = rows[0].payload,
-                    case let .integer(rawFieldType) = fieldTypeValue.typedValue else { return }
-                // second row in sequence: version #
-                guard rows[1].identifier.universalTag == .integer,
-                    case let .primitive(versionValue) = rows[1].payload,
-                    case let .integer(version) = versionValue.typedValue else { return }
-                // third row in sequence: ASN.1 contents
-                guard rows[2].identifier.universalTag == .octetString,
-                    case let .primitive(contentsValue) = rows[2].payload else { return }
-
-                if !intoInAppPurchaseReceipt {
-                    if ReceiptAttribute.AppReceiptFields(rawValue: Int(rawFieldType)) == .inAppPurchaseReceipt { // sub-dictionary for in-app purchase, we store this in a separate var
-                        try parseBytes(contentsValue.bytes, intoInAppPurchaseReceipt: true)
-
-                    } else if let appReceiptField = ReceiptAttribute.AppReceiptFields(rawValue: Int(rawFieldType)) {
-                        appReceiptEntries[appReceiptField] = ReceiptAttribute(fieldType: .app(appReceiptField), version: Int(version), rawValue: contentsValue)
-                    } else {
-                        unknownAppReceiptEntries[Int(rawFieldType)] = ReceiptAttribute(fieldType: .unknown(Int(rawFieldType)), version: Int(version), rawValue: contentsValue)
-                    }
-                } else {
-                    if let inAppPurchaseReceiptField = ReceiptAttribute.InAppPurchaseReceiptFields(rawValue: Int(rawFieldType)) {
-                        inAppPurchaseReceiptEntries[inAppPurchaseReceiptField] = ReceiptAttribute(fieldType: .inApp(inAppPurchaseReceiptField), version: Int(version), rawValue: contentsValue)
-                    } else {
-                        unknownInAppPurchaseReceiptEntries[Int(rawFieldType)] = ReceiptAttribute(fieldType: .unknown(Int(rawFieldType)), version: Int(version), rawValue: contentsValue)
-                    }
-                }
+            if ReceiptAttribute.AppReceiptFields(rawValue: Int(rawFieldType)) == .inAppPurchaseReceipt { // parse the in-app purchase array
+                inAppPurchaseReceipts.append(try InAppPurchaseReceipt(bytes: contentsValue.bytes))
+            } else if let appReceiptField = ReceiptAttribute.AppReceiptFields(rawValue: Int(rawFieldType)) {
+                appReceiptEntries[appReceiptField] = ReceiptAttribute(fieldType: .app(appReceiptField), version: Int(version), rawValue: contentsValue)
+            } else {
+                unknownAppReceiptEntries[Int(rawFieldType)] = ReceiptAttribute(fieldType: .unknown(Int(rawFieldType)), version: Int(version), rawValue: contentsValue)
             }
         }
-
-        try parseBytes(decryptedBytes)
 
         self.decoder = decoder
         self.bytes = decryptedBytes
         self.appReceiptEntries = appReceiptEntries
         self.unknownAppReceiptEntries = unknownAppReceiptEntries
+
+        self.inAppPurchaseReceipts = inAppPurchaseReceipts
+    }
+}
+
+private extension InAppPurchaseReceipt {
+    init(bytes: [UInt8]) throws {
+        var inAppPurchaseReceiptEntries: [ReceiptAttribute.InAppPurchaseReceiptFields : ReceiptAttribute] = [ : ]
+        var unknownInAppPurchaseReceiptEntries: [Int : ReceiptAttribute] = [ : ]
+
+        let items = try ASN1Reader.parse(bytes)
+
+        guard let outermostSet = items.first,
+            outermostSet.identifier.universalTag == .set,
+            case let .constructed(receiptSequences) = outermostSet.payload
+            else { throw Receipt.Errors.receiptMalformedMissingEnclosingSet }
+
+        try receiptSequences.forEach { sequence in
+            let (rawFieldType, contentsValue, version) = try sequence.extractProperty()
+
+            if let inAppPurchaseReceiptField = ReceiptAttribute.InAppPurchaseReceiptFields(rawValue: Int(rawFieldType)) {
+                inAppPurchaseReceiptEntries[inAppPurchaseReceiptField] = ReceiptAttribute(fieldType: .inApp(inAppPurchaseReceiptField), version: Int(version), rawValue: contentsValue)
+            } else {
+                unknownInAppPurchaseReceiptEntries[Int(rawFieldType)] = ReceiptAttribute(fieldType: .unknown(Int(rawFieldType)), version: Int(version), rawValue: contentsValue)
+            }
+        }
+
         self.inAppPurchaseReceiptEntries = inAppPurchaseReceiptEntries
         self.unknownInAppPurchaseReceiptEntries = unknownInAppPurchaseReceiptEntries
     }
