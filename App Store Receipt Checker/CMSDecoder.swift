@@ -38,7 +38,7 @@ public extension CMSDecoder { // MARK: functions
     public func decryptedContent() throws -> [UInt8] {
         var dataOptional: CFData?
         try CMSDecoderCopyContent(self, &dataOptional) | { throw Errors.cannotGetDecryptedData(status: $0) }
-        let data: Data! = dataOptional as Data!
+        let data = dataOptional! as Data
         return data.withUnsafeBytes { Array(UnsafeBufferPointer(start: $0, count: data.count)) }
     }
 }
