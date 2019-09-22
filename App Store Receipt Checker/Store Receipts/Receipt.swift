@@ -7,7 +7,7 @@
 //
 
 import Foundation
-
+import CommonCrypto
 
 public struct Receipt {
     // MARK: properties
