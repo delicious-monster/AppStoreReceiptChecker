@@ -27,20 +27,20 @@ public struct InAppPurchaseReceipt {
 }
 
 public extension Receipt { // MARK: init
-    public init() throws {
+    init() throws {
         try self.init(Bundle.main)
     }
-    public init(_ bundle: Bundle) throws {
+    init(_ bundle: Bundle) throws {
         guard let receiptURL = bundle.appStoreReceiptURL else { throw Errors.missingStoreReceipt }
         try self.init(receiptURL)
     }
-    public init(_ url: URL) throws {
+    init(_ url: URL) throws {
         try self.init(decoder: try CMSDecoder.decoder(url))
     }
-    public init(_ data: Data) throws {
+    init(_ data: Data) throws {
         try self.init(decoder: try CMSDecoder.decoder(data))
     }
-    public init(_ bytes: [UInt8]) throws {
+    init(_ bytes: [UInt8]) throws {
         try self.init(decoder: try CMSDecoder.decoder(bytes))
     }
 }

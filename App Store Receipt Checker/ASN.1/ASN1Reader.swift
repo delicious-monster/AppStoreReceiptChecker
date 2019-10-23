@@ -14,7 +14,7 @@ public class ASN1Reader {
 
 
 public extension ASN1Reader { // MARK: public methods
-    public static func parse(_ bytes: [UInt8]) throws -> [ASN1Item] {
+    static func parse(_ bytes: [UInt8]) throws -> [ASN1Item] {
 
         func internalParse(_ bytes: [UInt8], stopOnEOF: Bool = false) throws -> ([ASN1Item], Int) {
 
@@ -109,7 +109,7 @@ public extension ASN1Reader { // MARK: public methods
 
 
 public extension ASN1Reader { // MARK: Errors
-    public enum Errors : Error {
+    enum Errors : Error {
         case prematureEndOfBytes
     }
 }

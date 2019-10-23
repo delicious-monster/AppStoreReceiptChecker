@@ -6,7 +6,6 @@
 //  Copyright © 2018 Delicious Monster Software, LLC. All rights reserved.
 //
 
-import Foundation
 
 public struct ReceiptAttribute {
     public let fieldType: FieldType
@@ -42,8 +41,8 @@ extension ReceiptAttribute : CustomDebugStringConvertible { // MARK: <CustomDebu
     }
 }
 
-extension ReceiptAttribute { // MARK: types
-    public enum FieldType : Hashable {
+public extension ReceiptAttribute { // MARK: types
+    enum FieldType : Hashable {
         case app(_: AppReceiptFields)
         case inApp(_: InAppPurchaseReceiptFields)
         case unknown(_: Int)
@@ -61,20 +60,20 @@ extension ReceiptAttribute { // MARK: types
                 return false
             }
         }
-        // MARK: <Hashable>
-        public var hashValue: Int { // perfect hashing function assuming Apple doesn't add any tags over 0xffff
-            switch self {
-            case .app(let field):
-                return field.rawValue
-            case .inApp(let field):
-                return 0x10000 + field.rawValue
-            case .unknown(let field):
-                return 0x20000 + field
-            }
-        }
+//        // MARK: <Hashable>
+//        public var hashValue2: Int { // perfect hashing function assuming Apple doesn't add any tags over 0xffff
+//            switch self {
+//            case .app(let field):
+//                return field.rawValue
+//            case .inApp(let field):
+//                return 0x10000 + field.rawValue
+//            case .unknown(let field):
+//                return 0x20000 + field
+//            }
+//        }
     }
 
-    public enum AppReceiptFields : Int {
+    enum AppReceiptFields : Int {
         /**
          The app’s bundle identifier. `UTF8String`
          - Note: This corresponds to the value of CFBundleIdentifier in the Info.plist file. Use this value to validate if the receipt was indeed generated for your app.
@@ -126,7 +125,7 @@ extension ReceiptAttribute { // MARK: types
     }
 
 
-    public enum InAppPurchaseReceiptFields : Int {
+    enum InAppPurchaseReceiptFields : Int {
         /**
          The number of items purchased. `INTEGER`
          - Note: This value corresponds to the quantity property of the SKPayment object stored in the transaction’s payment property.

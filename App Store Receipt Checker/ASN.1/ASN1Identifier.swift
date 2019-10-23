@@ -6,8 +6,6 @@
 //  Copyright © 2018 Delicious Monster Software, LLC. All rights reserved.
 //
 
-import Foundation
-
 
 public struct ASN1Identifier {
     // MARK: properties
@@ -19,14 +17,14 @@ public struct ASN1Identifier {
 
 
 public extension ASN1Identifier { // MARK: types
-    public enum Method : UInt8 {
+    enum Method : UInt8 {
         case primitive = 0b0000_0000
         case constructed = 0b0010_0000
 
         static let mask: UInt8 = 0b0010_0000
     }
 
-    public enum TagClass : UInt8 {
+    enum TagClass : UInt8 {
         case universal = 0b0000_0000
         case application = 0b0100_0000
         case contextSpecific = 0b1000_0000
@@ -35,7 +33,7 @@ public extension ASN1Identifier { // MARK: types
         static let mask: UInt8 = 0b1100_0000
     }
 
-    public enum UniversalTag : UInt8 {
+    enum UniversalTag : UInt8 {
         case eof = 0x0
         case boolean = 0x1
         case integer = 0x2

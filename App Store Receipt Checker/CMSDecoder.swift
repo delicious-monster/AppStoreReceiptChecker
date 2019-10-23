@@ -11,23 +11,23 @@ import Security
 
 
 public extension CMSDecoder { // MARK: static functions
-    public static func decoder() throws -> CMSDecoder {
+    static func decoder() throws -> CMSDecoder {
         var decoderOptional: CMSDecoder?
         try CMSDecoderCreate(&decoderOptional) | { throw Errors.cannotCreateDecoder(status: $0) }
         return decoderOptional!
     }
 
-    public static func decoder(_ bytes: [UInt8]) throws -> CMSDecoder {
+    static func decoder(_ bytes: [UInt8]) throws -> CMSDecoder {
         let newDecoder = try decoder()
         try CMSDecoderUpdateMessage(newDecoder, bytes, bytes.count) | { throw Errors.cannotUpdateMessage(status: $0) }
         try CMSDecoderFinalizeMessage(newDecoder) | { throw Errors.cannotFinalizeMessage(status: $0) }
         return newDecoder
     }
-    public static func decoder(_ data: Data) throws -> CMSDecoder {
-        return try data.withUnsafeBytes { try decoder(Array(UnsafeBufferPointer(start: $0, count: data.count))) }
+    static func decoder(_ data: Data) throws -> CMSDecoder {
+        return try data.withUnsafeBytes { try decoder(Array($0)) }
     }
 
-    public static func decoder(_ url: URL) throws -> CMSDecoder {
+    static func decoder(_ url: URL) throws -> CMSDecoder {
         return try decoder(try Data(contentsOf: url))
     }
 }
@@ -35,16 +35,16 @@ public extension CMSDecoder { // MARK: static functions
 
 public extension CMSDecoder { // MARK: functions
     /// decrypted message
-    public func decryptedContent() throws -> [UInt8] {
+    func decryptedContent() throws -> [UInt8] {
         var dataOptional: CFData?
         try CMSDecoderCopyContent(self, &dataOptional) | { throw Errors.cannotGetDecryptedData(status: $0) }
         let data = dataOptional! as Data
-        return data.withUnsafeBytes { Array(UnsafeBufferPointer(start: $0, count: data.count)) }
+        return data.withUnsafeBytes { Array($0) }
     }
 }
 
 public extension CMSDecoder { // MARK: errors
-    public enum Errors : Error {
+    enum Errors : Error {
         case cannotCreateDecoder(status: OSStatus)
         case missingStoreReceipt
         case cannotUpdateMessage(status: OSStatus) // Failed to decode receipt data: Update message
