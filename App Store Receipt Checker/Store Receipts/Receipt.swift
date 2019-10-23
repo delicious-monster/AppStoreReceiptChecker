@@ -8,6 +8,7 @@
 
 import Foundation
 import CommonCrypto
+import IOKit
 
 public struct Receipt {
     // MARK: properties
@@ -287,26 +288,30 @@ private extension Receipt { // MARK: private methods
         var masterPort = mach_port_t(MACH_PORT_NULL)
         try IOMasterPort(mach_port_t(MACH_PORT_NULL), &masterPort) | { throw Errors.cannotGetMacAddress(kernReturn: $0) }
 
-        guard let matchingCFDictionary = IOBSDNameMatching(masterPort, 0, "en0") else { throw Errors.cannotGetMacAddress(kernReturn: 0) }
+        // create matching services dictionary for IOKit to enumerate — this is some UGLY swift, since we're switching from and then back to `CFDictionary`s
+        guard var matchingDictionary = IOServiceMatching("IOEthernetInterface") as? [String : CFTypeRef] else { throw Errors.cannotGetMacAddress(kernReturn: 0) }
+        matchingDictionary["IOPropertyMatch"] = ["IOPrimaryInterface" : true] as CFDictionary // there can be only one
 
+        // create ethernet iterator
         var ioIterator = io_iterator_t(MACH_PORT_NULL)
-        try IOServiceGetMatchingServices(masterPort, matchingCFDictionary, &ioIterator) | { throw Errors.cannotGetMacAddress(kernReturn: $0) }
+        try IOServiceGetMatchingServices(masterPort, matchingDictionary as CFDictionary, &ioIterator) | { throw Errors.cannotGetMacAddress(kernReturn: $0) }
+        if ioIterator == MACH_PORT_NULL { throw Errors.cannotGetMacAddress(kernReturn: 0) } // "If NULL is returned, the iteration was successful but found no matching services."
+        defer { IOObjectRelease(ioIterator) }
 
-        var macAddressCFData: CFData?
-        var nextService = IOIteratorNext(ioIterator)
-        while nextService != io_object_t(MACH_PORT_NULL) {
-            var parentService = io_object_t(MACH_PORT_NULL)
-            let result = IORegistryEntryGetParentEntry(nextService, kIOServicePlane, &parentService)
-            if result == KERN_SUCCESS {
-                macAddressCFData = (IORegistryEntryCreateCFProperty(parentService, "IOMACAddress" as CFString, kCFAllocatorDefault, 0).takeRetainedValue() as! CFData)
-                IOObjectRelease(parentService)
-            }
-            IOObjectRelease(nextService)
-            nextService = IOIteratorNext(ioIterator)
-        }
-        IOObjectRelease(ioIterator)
+        // only one service can be primary AND our ethernet interface
+        let firstAndOnlyService = IOIteratorNext(ioIterator)
+        guard firstAndOnlyService != MACH_PORT_NULL else { throw Errors.cannotGetMacAddress(kernReturn: 0) }
+        defer { IOObjectRelease(firstAndOnlyService) }
 
-        let data = (macAddressCFData! as Data)
-        return data.withUnsafeBytes { Array(UnsafeBufferPointer(start: $0, count: data.count)) }
+        // get that service's parent because the MAC address is there, for reasons
+        var parentService = io_object_t(MACH_PORT_NULL)
+        try IORegistryEntryGetParentEntry(firstAndOnlyService, kIOServicePlane, &parentService) | { throw Errors.cannotGetMacAddress(kernReturn: $0) }
+        defer { IOObjectRelease(parentService) }
+
+        // finally, get the darn MAC
+        guard let possibleMACAddressUnmanagedCFData = IORegistryEntryCreateCFProperty(parentService, "IOMACAddress" as CFString, kCFAllocatorDefault, 0),
+            let macAddressData = possibleMACAddressUnmanagedCFData.takeRetainedValue() as? Data else { throw Errors.cannotGetMacAddress(kernReturn: 0) }
+
+        return macAddressData.withUnsafeBytes { Array($0) }
     }
 }
