@@ -8,7 +8,7 @@
 
 import Foundation
 import CommonCrypto
-import IOKit
+import IOKit.network
 
 public struct Receipt {
     // MARK: properties
