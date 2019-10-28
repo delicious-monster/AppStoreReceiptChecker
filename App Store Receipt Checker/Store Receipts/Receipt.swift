@@ -285,16 +285,13 @@ private extension Receipt { // MARK: private methods
 
 
     private func macAddress() throws -> [UInt8] {
-        var masterPort = mach_port_t(MACH_PORT_NULL)
-        try IOMasterPort(mach_port_t(MACH_PORT_NULL), &masterPort) | { throw Errors.cannotGetMacAddress(kernReturn: $0) }
-
         // create matching services dictionary for IOKit to enumerate — this is some UGLY swift, since we're switching from and then back to `CFDictionary`s
-        guard var matchingDictionary = IOServiceMatching("IOEthernetInterface") as? [String : CFTypeRef] else { throw Errors.cannotGetMacAddress(kernReturn: 0) }
-        matchingDictionary["IOPropertyMatch"] = ["IOPrimaryInterface" : true] as CFDictionary // there can be only one
+        guard var matchingDictionary = IOServiceMatching(kIOEthernetInterfaceClass) as? [String : CFTypeRef] else { throw Errors.cannotGetMacAddress(kernReturn: 0) }
+        matchingDictionary[kIOPropertyMatchKey] = [kIOPrimaryInterface: true] as CFDictionary // there can be only one
 
         // create ethernet iterator
         var ioIterator = io_iterator_t(MACH_PORT_NULL)
-        try IOServiceGetMatchingServices(masterPort, matchingDictionary as CFDictionary, &ioIterator) | { throw Errors.cannotGetMacAddress(kernReturn: $0) }
+        try IOServiceGetMatchingServices(kIOMasterPortDefault, matchingDictionary as CFDictionary, &ioIterator) | { throw Errors.cannotGetMacAddress(kernReturn: $0) }
         if ioIterator == MACH_PORT_NULL { throw Errors.cannotGetMacAddress(kernReturn: 0) } // "If NULL is returned, the iteration was successful but found no matching services."
         defer { IOObjectRelease(ioIterator) }
 
@@ -309,7 +306,7 @@ private extension Receipt { // MARK: private methods
         defer { IOObjectRelease(parentService) }
 
         // finally, get the darn MAC
-        guard let possibleMACAddressUnmanagedCFData = IORegistryEntryCreateCFProperty(parentService, "IOMACAddress" as CFString, kCFAllocatorDefault, 0),
+        guard let possibleMACAddressUnmanagedCFData = IORegistryEntryCreateCFProperty(parentService, kIOMACAddress as CFString, kCFAllocatorDefault, 0),
             let macAddressData = possibleMACAddressUnmanagedCFData.takeRetainedValue() as? Data else { throw Errors.cannotGetMacAddress(kernReturn: 0) }
 
         return macAddressData.withUnsafeBytes { Array($0) }
