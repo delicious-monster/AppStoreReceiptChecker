@@ -19,6 +19,7 @@
 		7F1810A020560AD200950910 /* CMSDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F18109F20560AD200950910 /* CMSDecoder.swift */; };
 		7F1810A3205617AF00950910 /* ReceiptAttribute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F1810A2205617AF00950910 /* ReceiptAttribute.swift */; };
 		7F1810A52056182100950910 /* Receipt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F1810A42056182100950910 /* Receipt.swift */; };
+		7F3DC3A32380B6D3002AD81F /* MACAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F3DC3A22380B6D3002AD81F /* MACAddress.swift */; };
 		7F7DBDC7205762A7005B4990 /* ASN1Value.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F7DBDC6205762A7005B4990 /* ASN1Value.swift */; };
 		7FE25857205A651100F70F50 /* OSStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE25856205A651100F70F50 /* OSStatus.swift */; };
 /* End PBXBuildFile section */
@@ -62,6 +63,7 @@
 		7F18109F20560AD200950910 /* CMSDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CMSDecoder.swift; sourceTree = "<group>"; };
 		7F1810A2205617AF00950910 /* ReceiptAttribute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptAttribute.swift; sourceTree = "<group>"; };
 		7F1810A42056182100950910 /* Receipt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Receipt.swift; sourceTree = "<group>"; };
+		7F3DC3A22380B6D3002AD81F /* MACAddress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MACAddress.swift; sourceTree = "<group>"; };
 		7F4C4FF8205BBC7100D9E42E /* BadIcon.acorn */ = {isa = PBXFileReference; lastKnownFileType = file; path = BadIcon.acorn; sourceTree = "<group>"; };
 		7F7DBDC6205762A7005B4990 /* ASN1Value.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ASN1Value.swift; sourceTree = "<group>"; };
 		7FE25856205A651100F70F50 /* OSStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSStatus.swift; sourceTree = "<group>"; };
@@ -112,6 +114,7 @@
 			children = (
 				7F13C04920535C0E00D1FB8A /* Info.plist */,
 				7F18109F20560AD200950910 /* CMSDecoder.swift */,
+				7F3DC3A22380B6D3002AD81F /* MACAddress.swift */,
 				7FE25856205A651100F70F50 /* OSStatus.swift */,
 				7F1810A12056179500950910 /* Store Receipts */,
 				7F18109E20560A6500950910 /* ASN.1 */,
@@ -274,6 +277,7 @@
 				7F09372F20555FDF00EEBF1E /* ASN1Identifier.swift in Sources */,
 				7F7DBDC7205762A7005B4990 /* ASN1Value.swift in Sources */,
 				7FE25857205A651100F70F50 /* OSStatus.swift in Sources */,
+				7F3DC3A32380B6D3002AD81F /* MACAddress.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

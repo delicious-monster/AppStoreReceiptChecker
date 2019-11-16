@@ -6,9 +6,9 @@
 //  Copyright © 2018 Delicious Monster Software, LLC. All rights reserved.
 //
 
-import Foundation
 import CommonCrypto
-import IOKit.network
+import Foundation
+
 
 public struct Receipt {
     // MARK: properties
@@ -76,7 +76,7 @@ extension Receipt { // MARK: errors
         case receiptShortVersionStringMalformed
         case appVersionTooNew
         // check hash
-        case cannotGetMacAddress(kernReturn: kern_return_t)
+        case cannotGetMacAddress
         case receiptMalformedMissingOpaqueValue
         case receiptMalformedMissingSHA1Hash
         case receiptHashCheckFailed
@@ -246,7 +246,7 @@ private extension Receipt { // MARK: private methods
     }
 
     private func checkReceiptHash() throws {
-        let macAddressBytes = try macAddress()
+        guard let macAddressBytes = ProcessInfo.processInfo.macAddress() else { throw Errors.cannotGetMacAddress }
         guard let opaqueValueRawBytes = appReceiptEntries[.opaqueValue]?.rawValue.bytes else { throw Errors.receiptMalformedMissingOpaqueValue }
         guard let bundleIdentifierRawBytes = appReceiptEntries[.bundleIdentifier]?.rawValue.bytes else { throw Errors.receiptMissingBundleIdentifier }
 
@@ -281,34 +281,5 @@ private extension Receipt { // MARK: private methods
         try SecRequirementCreateWithString(requirementText as CFString, [], &requirement) | { throw Errors.cannotCreateRequirement(status: $0) }
 
         try SecStaticCodeCheckValidity(staticCode!, [], requirement!) | { throw Errors.bundleSignatureCheckFailed(status: $0) }
-    }
-
-
-    private func macAddress() throws -> [UInt8] {
-        // create matching services dictionary for IOKit to enumerate — this is some UGLY swift, since we're switching from and then back to `CFDictionary`s
-        guard var matchingDictionary = IOServiceMatching(kIOEthernetInterfaceClass) as? [String : CFTypeRef] else { throw Errors.cannotGetMacAddress(kernReturn: 0) }
-        matchingDictionary[kIOPropertyMatchKey] = [kIOPrimaryInterface: true] as CFDictionary // there can be only one
-
-        // create ethernet iterator
-        var ioIterator = io_iterator_t(MACH_PORT_NULL)
-        try IOServiceGetMatchingServices(kIOMasterPortDefault, matchingDictionary as CFDictionary, &ioIterator) | { throw Errors.cannotGetMacAddress(kernReturn: $0) }
-        if ioIterator == MACH_PORT_NULL { throw Errors.cannotGetMacAddress(kernReturn: 0) } // "If NULL is returned, the iteration was successful but found no matching services."
-        defer { IOObjectRelease(ioIterator) }
-
-        // only one service can be primary AND our ethernet interface
-        let firstAndOnlyService = IOIteratorNext(ioIterator)
-        guard firstAndOnlyService != MACH_PORT_NULL else { throw Errors.cannotGetMacAddress(kernReturn: 0) }
-        defer { IOObjectRelease(firstAndOnlyService) }
-
-        // get that service's parent because the MAC address is there, for reasons
-        var parentService = io_object_t(MACH_PORT_NULL)
-        try IORegistryEntryGetParentEntry(firstAndOnlyService, kIOServicePlane, &parentService) | { throw Errors.cannotGetMacAddress(kernReturn: $0) }
-        defer { IOObjectRelease(parentService) }
-
-        // finally, get the darn MAC
-        guard let possibleMACAddressUnmanagedCFData = IORegistryEntryCreateCFProperty(parentService, kIOMACAddress as CFString, kCFAllocatorDefault, 0),
-            let macAddressData = possibleMACAddressUnmanagedCFData.takeRetainedValue() as? Data else { throw Errors.cannotGetMacAddress(kernReturn: 0) }
-
-        return macAddressData.withUnsafeBytes { Array($0) }
     }
 }
