@@ -13,14 +13,14 @@ import IOKit.network
 
 public extension ProcessInfo {
 
-    func macAddress() -> [UInt8]? {
+    var macAddress: [UInt8]? {
         // create matching services dictionary for IOKit to enumerate — this is some UGLY swift, since we're switching from and then back to `CFDictionary`s
         guard var matchingDictionary = IOServiceMatching(kIOEthernetInterfaceClass) as? [String : CFTypeRef] else { return nil }
         matchingDictionary[kIOPropertyMatchKey] = [kIOPrimaryInterface: true] as CFDictionary // there can be only one
 
         // create ethernet iterator
         var ioIterator = io_iterator_t(MACH_PORT_NULL)
-        guard IOServiceGetMatchingServices(kIOMasterPortDefault, matchingDictionary as CFDictionary, &ioIterator) != 0 else { return nil }
+        guard IOServiceGetMatchingServices(kIOMasterPortDefault, matchingDictionary as CFDictionary, &ioIterator) == noErr else { return nil }
         if ioIterator == MACH_PORT_NULL { return nil } // "If NULL is returned, the iteration was successful but found no matching services."
         defer { IOObjectRelease(ioIterator) }
 
@@ -31,7 +31,7 @@ public extension ProcessInfo {
 
         // get that service's parent because the MAC address is there, for reasons
         var parentService = io_object_t(MACH_PORT_NULL)
-        guard IORegistryEntryGetParentEntry(firstAndOnlyService, kIOServicePlane, &parentService) != 0 else { return nil }
+        guard IORegistryEntryGetParentEntry(firstAndOnlyService, kIOServicePlane, &parentService) == noErr else { return nil }
         defer { IOObjectRelease(parentService) }
 
         // finally, get the darn MAC

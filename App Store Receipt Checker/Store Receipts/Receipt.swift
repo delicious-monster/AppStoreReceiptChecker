@@ -246,7 +246,7 @@ private extension Receipt { // MARK: private methods
     }
 
     private func checkReceiptHash() throws {
-        guard let macAddressBytes = ProcessInfo.processInfo.macAddress() else { throw Errors.cannotGetMacAddress }
+        guard let macAddressBytes = ProcessInfo.processInfo.macAddress else { throw Errors.cannotGetMacAddress }
         guard let opaqueValueRawBytes = appReceiptEntries[.opaqueValue]?.rawValue.bytes else { throw Errors.receiptMalformedMissingOpaqueValue }
         guard let bundleIdentifierRawBytes = appReceiptEntries[.bundleIdentifier]?.rawValue.bytes else { throw Errors.receiptMissingBundleIdentifier }
 
