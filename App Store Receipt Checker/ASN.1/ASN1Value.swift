@@ -66,26 +66,26 @@ extension ASN1Value { // MARK: calculated values
         case .embeddedPDV:
             return .bytes(bytes)
         case .utf8String:
-            return .string(String(bytes: UnsafeBufferPointer(start: bytes, count: bytes.count), encoding: .utf8) ?? "")
+            return .string(bytes.withUnsafeBytes { String(bytes: $0, encoding: .utf8) ?? "" })
         case .sequence:
             return .bytes(bytes)
         case .set:
             return .bytes(bytes)
         case .numericString:
-            return .string(String(bytes: UnsafeBufferPointer(start: bytes, count: bytes.count), encoding: .ascii) ?? "")
+            return .string(bytes.withUnsafeBytes { String(bytes: $0, encoding: .ascii) ?? "" })
         case .printableString:
-            return .string(String(bytes: UnsafeBufferPointer(start: bytes, count: bytes.count), encoding: .ascii) ?? "")
+            return .string(bytes.withUnsafeBytes { String(bytes: $0, encoding: .ascii) ?? "" })
         case .t61String: // == 8-bit ASCII
-        return .string(String(bytes: UnsafeBufferPointer(start: bytes, count: bytes.count), encoding: .utf8) ?? "")
+        return .string(bytes.withUnsafeBytes { String(bytes: $0, encoding: .utf8) ?? "" })
         case .integer:
             return .integer(bytes.reduce(UInt64(0)) { ($0 << 8) | UInt64($1) })
         case .videotexString:
             return .bytes(bytes)
         case .ia5String: //  == ASCII
-            return .string(String(bytes: UnsafeBufferPointer(start: bytes, count: bytes.count), encoding: .ascii) ?? "")
+            return .string(bytes.withUnsafeBytes { String(bytes: $0, encoding: .ascii) ?? "" })
         case .utcTime:
         // YYMMDDhhmmZ or YYMMDDhhmm+hh'mm' or YYMMDDhhmm-hh'mm' or YYMMDDhhmmssZ or YYMMDDhhmmss+hh'mm' or YYMMDDhhmmss-hh'mm'
-            guard let dateString = String(bytes: UnsafeBufferPointer(start: bytes, count: bytes.count), encoding: .ascii) else { return .bytes(bytes) }
+            guard let dateString = (bytes.withUnsafeBytes { String(bytes: $0, encoding: .ascii) }) else { return .bytes(bytes) }
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyMMddHHmmXX" // see http://userguide.icu-project.org/formatparse/datetime
             if let date = dateFormatter.date(from: dateString) {
