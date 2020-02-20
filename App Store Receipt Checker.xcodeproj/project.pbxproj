@@ -91,7 +91,8 @@
 			isa = PBXGroup;
 			children = (
 				7FE2585A205A866500F70F50 /* README.md */,
-				7F13C04720535C0E00D1FB8A /* App Store Receipt Checker */,
+				7F13C04920535C0E00D1FB8A /* Info.plist */,
+				7F13C04720535C0E00D1FB8A /* Sources */,
 				7F13C059205361A200D1FB8A /* Receipt Checker Test Harness */,
 				7F4C4FF8205BBC7100D9E42E /* BadIcon.acorn */,
 				7F13C03720535ACB00D1FB8A /* Products */,
@@ -107,16 +108,12 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		7F13C04720535C0E00D1FB8A /* App Store Receipt Checker */ = {
+		7F13C04720535C0E00D1FB8A /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				7F13C04920535C0E00D1FB8A /* Info.plist */,
-				7F18109F20560AD200950910 /* CMSDecoder.swift */,
-				7FE25856205A651100F70F50 /* OSStatus.swift */,
-				7F1810A12056179500950910 /* Store Receipts */,
-				7F18109E20560A6500950910 /* ASN.1 */,
+				E51F06B923FEDF91006B8AFE /* AppStoreReceiptChecker */,
 			);
-			path = "App Store Receipt Checker";
+			path = Sources;
 			sourceTree = "<group>";
 		};
 		7F13C059205361A200D1FB8A /* Receipt Checker Test Harness */ = {
@@ -131,7 +128,7 @@
 			path = "Receipt Checker Test Harness";
 			sourceTree = "<group>";
 		};
-		7F18109E20560A6500950910 /* ASN.1 */ = {
+		7F18109E20560A6500950910 /* ASN1 */ = {
 			isa = PBXGroup;
 			children = (
 				7F13C05220535E8E00D1FB8A /* ASN1Reader.swift */,
@@ -139,16 +136,27 @@
 				7F09372E20555FDF00EEBF1E /* ASN1Identifier.swift */,
 				7F7DBDC6205762A7005B4990 /* ASN1Value.swift */,
 			);
-			path = ASN.1;
+			path = ASN1;
 			sourceTree = "<group>";
 		};
-		7F1810A12056179500950910 /* Store Receipts */ = {
+		7F1810A12056179500950910 /* StoreReceipts */ = {
 			isa = PBXGroup;
 			children = (
 				7F1810A42056182100950910 /* Receipt.swift */,
 				7F1810A2205617AF00950910 /* ReceiptAttribute.swift */,
 			);
-			path = "Store Receipts";
+			path = StoreReceipts;
+			sourceTree = "<group>";
+		};
+		E51F06B923FEDF91006B8AFE /* AppStoreReceiptChecker */ = {
+			isa = PBXGroup;
+			children = (
+				7F18109F20560AD200950910 /* CMSDecoder.swift */,
+				7FE25856205A651100F70F50 /* OSStatus.swift */,
+				7F1810A12056179500950910 /* StoreReceipts */,
+				7F18109E20560A6500950910 /* ASN1 */,
+			);
+			path = AppStoreReceiptChecker;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -357,7 +365,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -410,7 +418,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -429,7 +437,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = "$(SRCROOT)/App Store Receipt Checker/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.delicious-monster.AppStoreReceiptChecker";
@@ -454,7 +462,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = "$(SRCROOT)/App Store Receipt Checker/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.delicious-monster.AppStoreReceiptChecker";
@@ -476,6 +484,7 @@
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "$(SRCROOT)/Receipt Checker Test Harness/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.delicious-monster.Receipt-Checker-Test-Harness";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -493,6 +502,7 @@
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "$(SRCROOT)/Receipt Checker Test Harness/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.delicious-monster.Receipt-Checker-Test-Harness";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

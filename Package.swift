@@ -11,7 +11,7 @@ let package = Package(
         .library(name: "AppStoreReceiptChecker", targets: ["AppStoreReceiptChecker"]),
     ],
     targets: [
-        .target(name: "AppStoreReceiptChecker", path: "App Store Receipt Checker")
+        .target(name: "AppStoreReceiptChecker", path: "Sources")
     ],
     swiftLanguageVersions: [
         .v5
