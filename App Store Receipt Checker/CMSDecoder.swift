@@ -24,11 +24,11 @@ public extension CMSDecoder { // MARK: static functions
         return newDecoder
     }
     static func decoder(_ data: Data) throws -> CMSDecoder {
-        return try data.withUnsafeBytes { try decoder(Array($0)) }
+        try data.withUnsafeBytes { try decoder(Array($0)) }
     }
 
     static func decoder(_ url: URL) throws -> CMSDecoder {
-        return try decoder(try Data(contentsOf: url))
+        try decoder(try Data(contentsOf: url))
     }
 }
 

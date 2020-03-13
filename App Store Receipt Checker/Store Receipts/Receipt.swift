@@ -95,7 +95,7 @@ extension Receipt { // MARK: errors
 
 extension Receipt : CustomDebugStringConvertible { // MARK: <CustomDebugStringConvertible>
     public var debugDescription: String {
-        return """
+        """
         appReceiptEntries:
         \t\(appReceiptEntries.values.sorted { $0.fieldType.hashValue < $1.fieldType.hashValue }.map { $0.debugDescription }.joined(separator: "\n\t"))
         unknownAppReceiptEntries:
@@ -108,7 +108,7 @@ extension Receipt : CustomDebugStringConvertible { // MARK: <CustomDebugStringCo
 
 extension InAppPurchaseReceipt : CustomDebugStringConvertible { // MARK: <CustomDebugStringConvertible>
     public var debugDescription: String {
-        return """
+        """
         \tinAppPurchaseReceiptEntries:
         \t\t\(inAppPurchaseReceiptEntries.values.sorted { $0.fieldType.hashValue < $1.fieldType.hashValue }.map { $0.debugDescription }.joined(separator: "\n\t\t"))
         unknownInAppPurchaseReceiptEntries:
