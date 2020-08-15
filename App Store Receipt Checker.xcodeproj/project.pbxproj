@@ -438,6 +438,7 @@
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = "$(SRCROOT)/App Store Receipt Checker/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.delicious-monster.AppStoreReceiptChecker";
 				PRODUCT_NAME = AppStoreReceiptChecker;
 				SKIP_INSTALL = YES;
@@ -463,6 +464,7 @@
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = "$(SRCROOT)/App Store Receipt Checker/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.delicious-monster.AppStoreReceiptChecker";
 				PRODUCT_NAME = AppStoreReceiptChecker;
 				SKIP_INSTALL = YES;
