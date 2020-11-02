@@ -60,17 +60,6 @@ public extension ReceiptAttribute { // MARK: types
                 return false
             }
         }
-//        // MARK: <Hashable>
-//        public var hashValue2: Int { // perfect hashing function assuming Apple doesn't add any tags over 0xffff
-//            switch self {
-//            case .app(let field):
-//                return field.rawValue
-//            case .inApp(let field):
-//                return 0x10000 + field.rawValue
-//            case .unknown(let field):
-//                return 0x20000 + field
-//            }
-//        }
     }
 
     enum AppReceiptFields : Int {

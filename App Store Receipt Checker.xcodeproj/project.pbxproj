@@ -19,6 +19,7 @@
 		7F1810A020560AD200950910 /* CMSDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F18109F20560AD200950910 /* CMSDecoder.swift */; };
 		7F1810A3205617AF00950910 /* ReceiptAttribute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F1810A2205617AF00950910 /* ReceiptAttribute.swift */; };
 		7F1810A52056182100950910 /* Receipt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F1810A42056182100950910 /* Receipt.swift */; };
+		7F184DAD253628780028AFC1 /* samplereceipt.2020 in Resources */ = {isa = PBXBuildFile; fileRef = 7F184DAC253628780028AFC1 /* samplereceipt.2020 */; };
 		7F3DC3A32380B6D3002AD81F /* MACAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F3DC3A22380B6D3002AD81F /* MACAddress.swift */; };
 		7F7DBDC7205762A7005B4990 /* ASN1Value.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F7DBDC6205762A7005B4990 /* ASN1Value.swift */; };
 		7FE25857205A651100F70F50 /* OSStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE25856205A651100F70F50 /* OSStatus.swift */; };
@@ -63,6 +64,7 @@
 		7F18109F20560AD200950910 /* CMSDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CMSDecoder.swift; sourceTree = "<group>"; };
 		7F1810A2205617AF00950910 /* ReceiptAttribute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptAttribute.swift; sourceTree = "<group>"; };
 		7F1810A42056182100950910 /* Receipt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Receipt.swift; sourceTree = "<group>"; };
+		7F184DAC253628780028AFC1 /* samplereceipt.2020 */ = {isa = PBXFileReference; lastKnownFileType = file; path = samplereceipt.2020; sourceTree = "<group>"; };
 		7F3DC3A22380B6D3002AD81F /* MACAddress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MACAddress.swift; sourceTree = "<group>"; };
 		7F4C4FF8205BBC7100D9E42E /* BadIcon.acorn */ = {isa = PBXFileReference; lastKnownFileType = file; path = BadIcon.acorn; sourceTree = "<group>"; };
 		7F7DBDC6205762A7005B4990 /* ASN1Value.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ASN1Value.swift; sourceTree = "<group>"; };
@@ -130,6 +132,7 @@
 				7F13C05E205361A200D1FB8A /* MainMenu.xib */,
 				7F13C05A205361A200D1FB8A /* AppDelegate.swift */,
 				7F13C04020535ADC00D1FB8A /* samplereceipt */,
+				7F184DAC253628780028AFC1 /* samplereceipt.2020 */,
 			);
 			path = "Receipt Checker Test Harness";
 			sourceTree = "<group>";
@@ -259,6 +262,7 @@
 				7F13C05D205361A200D1FB8A /* Assets.xcassets in Resources */,
 				7F13C06B2053621000D1FB8A /* samplereceipt in Resources */,
 				7F13C060205361A200D1FB8A /* MainMenu.xib in Resources */,
+				7F184DAD253628780028AFC1 /* samplereceipt.2020 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -345,6 +349,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -363,6 +368,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MARKETING_VERSION = 1.1;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = "$(SDKROOT:default=macosx)";
@@ -405,6 +411,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -417,6 +424,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MARKETING_VERSION = 1.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = "$(SDKROOT:default=macosx)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -430,7 +438,6 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -438,14 +445,11 @@
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = "$(SRCROOT)/App Store Receipt Checker/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				MARKETING_VERSION = 1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.delicious-monster.AppStoreReceiptChecker";
 				PRODUCT_NAME = AppStoreReceiptChecker;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
 			};
 			name = Debug;
 		};
@@ -456,7 +460,6 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -464,13 +467,10 @@
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = "$(SRCROOT)/App Store Receipt Checker/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				MARKETING_VERSION = 1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.delicious-monster.AppStoreReceiptChecker";
 				PRODUCT_NAME = AppStoreReceiptChecker;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
 		};

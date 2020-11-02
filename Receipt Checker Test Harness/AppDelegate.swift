@@ -20,7 +20,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
 
-        guard let receiptURL = Bundle.main.url(forResource: "samplereceipt", withExtension:"") else { exit(-1) }
+        guard let receiptURL = Bundle.main.url(forResource: "samplereceipt", withExtension:"2020") else { exit(-1) }
         let receipt = try! Receipt(receiptURL)
 
         textView.string = receipt.debugDescription
