@@ -66,37 +66,36 @@ extension ASN1Value { // MARK: calculated values
         case .embeddedPDV:
             return .bytes(bytes)
         case .utf8String:
-            return .string(String(bytes: UnsafeBufferPointer(start: bytes, count: bytes.count), encoding: .utf8) ?? "")
+            return .string(bytes.withUnsafeBytes { String(bytes: $0, encoding: .utf8) ?? "" })
         case .sequence:
             return .bytes(bytes)
         case .set:
             return .bytes(bytes)
         case .numericString:
-            return .string(String(bytes: UnsafeBufferPointer(start: bytes, count: bytes.count), encoding: .ascii) ?? "")
+            return .string(bytes.withUnsafeBytes { String(bytes: $0, encoding: .ascii) ?? "" })
         case .printableString:
-            return .string(String(bytes: UnsafeBufferPointer(start: bytes, count: bytes.count), encoding: .ascii) ?? "")
+            return .string(bytes.withUnsafeBytes { String(bytes: $0, encoding: .ascii) ?? "" })
         case .t61String: // == 8-bit ASCII
-        return .string(String(bytes: UnsafeBufferPointer(start: bytes, count: bytes.count), encoding: .utf8) ?? "")
+        return .string(bytes.withUnsafeBytes { String(bytes: $0, encoding: .utf8) ?? "" })
         case .integer:
             return .integer(bytes.reduce(UInt64(0)) { ($0 << 8) | UInt64($1) })
         case .videotexString:
             return .bytes(bytes)
-        case .ia5String: //  == ASCII
-            return .string(String(bytes: UnsafeBufferPointer(start: bytes, count: bytes.count), encoding: .ascii) ?? "")
-        case .utcTime:
-        // YYMMDDhhmmZ or YYMMDDhhmm+hh'mm' or YYMMDDhhmm-hh'mm' or YYMMDDhhmmssZ or YYMMDDhhmmss+hh'mm' or YYMMDDhhmmss-hh'mm'
-            guard let dateString = String(bytes: UnsafeBufferPointer(start: bytes, count: bytes.count), encoding: .ascii) else { return .bytes(bytes) }
+        case .ia5String /* ASCII */, .utcTime /* older */, .generalizedTime /* newer */:
+            // YYMMDDhhmmZ or YYMMDDhhmm+hh'mm' or YYMMDDhhmm-hh'mm' or YYMMDDhhmmssZ or YYMMDDhhmmss+hh'mm' or YYMMDDhhmmss-hh'mm'
+            guard let dateString = (bytes.withUnsafeBytes { String(bytes: $0, encoding: .ascii) }) else { return .bytes(bytes) }
             let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyMMddHHmmXX" // see http://userguide.icu-project.org/formatparse/datetime
-            if let date = dateFormatter.date(from: dateString) {
+            // NOTE: Apple added milliseconds to their receipts in Oct 2020, so now they would have '2020-10-03T07:12:34.567Z' not '2020-10-03T07:12:34Z'
+            for dateFormat in ["yyMMddHHmmXX", "yyMMddHHmmssXX", "yyMMddHHmmssSSSXX"] {
+                dateFormatter.dateFormat = dateFormat // see http://userguide.icu-project.org/formatparse/datetime
+                if let date = dateFormatter.date(from: dateString) {
+                    return .date(date)
+                }
+            }
+            let iso8601Formatter = ISO8601DateFormatter() // now I'm just jumping at shadows
+            if let date = iso8601Formatter.date(from: dateString) {
                 return .date(date)
             }
-            dateFormatter.dateFormat = "yyMMddHHmmssXX" // see http://userguide.icu-project.org/formatparse/datetime
-            if let date = dateFormatter.date(from: dateString) {
-                return .date(date)
-            }
-            return .bytes(bytes)
-        case .generalizedTime:
             return .bytes(bytes)
         case .graphicString:
             return .bytes(bytes)
