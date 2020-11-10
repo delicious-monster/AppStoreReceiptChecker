@@ -5,7 +5,7 @@ import PackageDescription
 let package = Package(
     name: "AppStoreReceiptChecker",
     platforms: [
-        .macOS(.v10_11)
+        .macOS(.v10_12)
     ],
     products: [
         .library(name: "AppStoreReceiptChecker", targets: ["AppStoreReceiptChecker"]),
